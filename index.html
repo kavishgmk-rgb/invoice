@@ -194,12 +194,96 @@
     .invoice{box-shadow:none !important;}
     .inv-title{-webkit-text-fill-color:#111 !important;color:#111 !important;background:none !important;}
   }
+
+  /* ---------- Saved invoices ---------- */
+  .topbar{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+  .btn-history{
+    background:linear-gradient(135deg,#5a3fc0,#1f3a93);color:#fff;border:none;
+    padding:12px 16px;border-radius:10px;font-size:.98rem;font-weight:700;cursor:pointer;
+    box-shadow:0 6px 16px rgba(90,63,192,.25);
+  }
+  .btn-history:active{background:linear-gradient(135deg,#4a33a8,#16306e);}
+  .hist-tools{margin-bottom:14px;}
+  .btn-xlsx{
+    width:100%;background:linear-gradient(135deg,#1e7d46,#146c39);color:#fff;border:none;
+    padding:14px 16px;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;
+    box-shadow:0 6px 16px rgba(20,108,57,.22);
+  }
+  .btn-xlsx:active{background:linear-gradient(135deg,#186b3b,#0f5a30);}
+  .hist-row{display:flex;align-items:stretch;gap:8px;margin-top:10px;}
+  .hist-open{
+    flex:1;text-align:left;cursor:pointer;
+    background:linear-gradient(180deg,#ffffff,#f7f8ff);border:1px solid #e6e8f5;
+    border-radius:12px;padding:14px 16px;
+  }
+  .hist-open:active{background:#eef1fb;}
+  .hist-del{
+    flex:0 0 auto;width:54px;border:1px solid #f2c9c4;border-radius:12px;cursor:pointer;
+    background:linear-gradient(180deg,#fff5f4,#fdecea);color:#c0392b;font-size:1.2rem;
+  }
+  .hist-del:active{background:#f8dcd8;}
+  .hist-main{display:flex;gap:8px;align-items:baseline;font-size:1.05rem;}
+  .hist-no{font-weight:800;color:#1f3a93;}
+  .hist-name{font-weight:600;color:#222;}
+  .hist-sub{display:flex;justify-content:space-between;margin-top:6px;color:#6b7280;font-size:.92rem;}
+  .hist-amt{font-weight:700;color:#111;}
+
+  /* ---------- Voice typing mic button (big & easy to see) ---------- */
+  .mic-btn{
+    margin-top:10px;display:flex;width:100%;justify-content:center;align-items:center;gap:10px;
+    background:linear-gradient(135deg,#e8eeff,#dbe4ff);border:2px solid #b9c6f5;color:#1f3a93;
+    padding:16px;border-radius:14px;font-size:1.2rem;font-weight:800;cursor:pointer;
+    min-height:58px;box-shadow:0 5px 14px rgba(31,58,147,.16);
+  }
+  .mic-btn:active{background:linear-gradient(135deg,#d7e1ff,#c9d6ff);}
+  .mic-btn.mic-live{
+    background:linear-gradient(135deg,#ffdad5,#ffc4bd);border-color:#ef9a92;color:#c0392b;
+    animation:micpulse 1s ease-in-out infinite;
+  }
+  @keyframes micpulse{0%,100%{box-shadow:0 5px 14px rgba(192,57,43,.20);}50%{box-shadow:0 5px 22px rgba(192,57,43,.45);}}
+
+  /* ---------- Client suggestions ---------- */
+  .suggest-box{
+    margin-top:8px;background:#fff;border:1px solid #d1d5db;border-radius:10px;
+    box-shadow:0 8px 20px rgba(20,30,70,.10);max-height:260px;overflow-y:auto;
+  }
+  .suggest-item{
+    display:block;width:100%;text-align:left;cursor:pointer;background:#fff;border:none;
+    border-bottom:1px solid #eef0f6;padding:14px 16px;font-size:1.05rem;
+  }
+  .suggest-item:last-child{border-bottom:none;}
+  .suggest-item:active{background:#eef2ff;}
+  .s-name{font-weight:700;color:#1f3a93;}
+  .s-addr{display:block;color:#6b7280;font-size:.9rem;margin-top:3px;}
+
+  /* ---------- Saved clients manager ---------- */
+  .cl-row{
+    display:flex;align-items:center;gap:10px;
+    background:linear-gradient(180deg,#ffffff,#f7f8ff);border:1px solid #e6e8f5;
+    border-radius:12px;padding:14px 16px;margin-top:10px;
+  }
+  .cl-info{flex:1;min-width:0;}
+  .cl-name{font-weight:700;color:#1f3a93;font-size:1.05rem;}
+  .cl-addr{color:#6b7280;font-size:.9rem;margin-top:3px;}
+  .cl-actions{display:flex;gap:8px;flex:0 0 auto;}
+  .cl-edit{
+    border:1px solid #b9c6f5;background:linear-gradient(180deg,#eef2ff,#e3e9ff);color:#1f3a93;
+    border-radius:10px;padding:10px 14px;font-weight:700;font-size:.95rem;cursor:pointer;
+  }
+  .cl-del{
+    border:1px solid #f2c9c4;background:linear-gradient(180deg,#fff5f4,#fdecea);color:#c0392b;
+    border-radius:10px;padding:10px 12px;font-size:1.1rem;cursor:pointer;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div id="formSection">
+    <div class="topbar">
+      <button type="button" class="btn-history" id="clientsBtn">👥 Clients</button>
+      <button type="button" class="btn-history" id="historyBtn">🔒 Saved Invoices</button>
+    </div>
     <h1>Invoice Generator</h1>
     <p class="sub">Fill in the details below, then tap <strong>Generate Invoice</strong>.</p>
 
@@ -220,7 +304,8 @@
     <div class="card">
       <h2>Bill to</h2>
       <label for="billName">Client / company name</label>
-      <input id="billName" type="text" placeholder="e.g. Mandala Motion Pictures PVT LTD">
+      <input id="billName" type="text" autocomplete="off" placeholder="e.g. Mandala Motion Pictures PVT LTD">
+      <div id="clientSuggest" class="suggest-box" style="display:none;"></div>
       <label for="billAddr">Address (one line per row)</label>
       <textarea id="billAddr" placeholder="9 horizon view&#10;General Bhosle road&#10;Mumbai 21"></textarea>
     </div>
@@ -297,12 +382,210 @@
     </div>
   </div>
 
+  <div id="historySection" style="display:none;">
+    <div class="toolbar">
+      <button type="button" class="btn btn-secondary" id="histBackBtn">← Back</button>
+    </div>
+    <div class="card">
+      <h2>Saved Invoices</h2>
+      <div class="hist-tools">
+        <button type="button" class="btn-xlsx" id="downloadXlsxBtn">⬇ Download Excel (all invoices)</button>
+      </div>
+      <div id="histList"></div>
+    </div>
+  </div>
+
+  <div id="clientsSection" style="display:none;">
+    <div class="toolbar">
+      <button type="button" class="btn btn-secondary" id="clientsBackBtn">← Back</button>
+    </div>
+    <div class="card">
+      <h2>Saved Clients</h2>
+      <div id="clientsList"></div>
+    </div>
+  </div>
+
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 (function(){
   const itemsWrap = document.getElementById('itemsWrap');
   let lastInvoice = null;
+  const STORE_KEY = 'samir_invoices';
+  const HIST_PASSWORD = '9899';
+  function loadInvoices(){
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+    catch(e){ return []; }
+  }
+  function persist(all){
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(all)); } catch(e){}
+  }
+  function saveInvoice(rec){
+    // replace any existing invoice with the same number (no duplicates)
+    const all = loadInvoices().filter(function(r){ return String(r.invNo) !== String(rec.invNo); });
+    all.push(rec);
+    persist(all);
+  }
+  function deleteInvoice(id){
+    persist(loadInvoices().filter(function(r){ return r.id !== id; }));
+  }
+  function fyOf(rec){
+    // Indian financial year: Apr 1 - Mar 31
+    let d = null;
+    if(rec.date){
+      const p = ('' + rec.date).split('-');
+      if(p.length === 3){ d = new Date(+p[2], (+p[1]) - 1, +p[0]); }
+    }
+    if(!d || isNaN(d.getTime())){ d = rec.savedAt ? new Date(rec.savedAt) : new Date(); }
+    const y = d.getFullYear(), m = d.getMonth();
+    const start = (m >= 3) ? y : y - 1;
+    const end = (start + 1) % 100;
+    return start + '-' + ('0' + end).slice(-2);
+  }
+
+  // ---- client memory (name -> address) ----
+  const CLIENT_KEY = 'samir_clients';
+  function loadClients(){
+    try { return JSON.parse(localStorage.getItem(CLIENT_KEY) || '[]'); }
+    catch(e){ return []; }
+  }
+  function saveClient(name, addr){
+    name = (name || '').trim();
+    if(!name) return;
+    const all = loadClients().filter(function(c){ return (c.name || '').toLowerCase() !== name.toLowerCase(); });
+    all.push({ name: name, address: (addr || '').trim() });
+    try { localStorage.setItem(CLIENT_KEY, JSON.stringify(all)); } catch(e){}
+    refreshClientList();
+  }
+  function findClient(name){
+    name = (name || '').trim().toLowerCase();
+    if(!name) return null;
+    const list = loadClients();
+    for(var i=0;i<list.length;i++){ if((list[i].name || '').toLowerCase() === name) return list[i]; }
+    return null;
+  }
+  function renderSuggest(query){
+    const box = document.getElementById('clientSuggest');
+    if(!box) return;
+    const q = (query || '').trim().toLowerCase();
+    let list = loadClients();
+    if(q){ list = list.filter(function(c){ return (c.name || '').toLowerCase().indexOf(q) >= 0; }); }
+    if(list.length === 0){ box.innerHTML = ''; box.style.display = 'none'; return; }
+    box.innerHTML = list.slice(0, 8).map(function(c){
+      const nm = (c.name || '').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+      const ad = (c.address || '').replace(/\n/g,', ').replace(/</g,'&lt;');
+      return '<button type="button" class="suggest-item" data-name="' + nm + '">' +
+             '<span class="s-name">' + nm + '</span>' +
+             (ad ? '<span class="s-addr">' + ad + '</span>' : '') + '</button>';
+    }).join('');
+    box.querySelectorAll('.suggest-item').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const nm = btn.getAttribute('data-name');
+        const c = findClient(nm);
+        document.getElementById('billName').value = nm;
+        if(c){ document.getElementById('billAddr').value = c.address || ''; }
+        box.style.display = 'none';
+      });
+    });
+    box.style.display = 'block';
+  }
+  function refreshClientList(){
+    const nameEl = document.getElementById('billName');
+    if(nameEl && document.activeElement === nameEl){ renderSuggest(nameEl.value); }
+  }
+  function deleteClient(name){
+    const all = loadClients().filter(function(c){ return (c.name || '').toLowerCase() !== (name || '').toLowerCase(); });
+    try { localStorage.setItem(CLIENT_KEY, JSON.stringify(all)); } catch(e){}
+  }
+  function updateClient(oldName, newName, newAddr){
+    newName = (newName || '').trim();
+    if(!newName){ alert('Name cannot be empty.'); return; }
+    const on = (oldName || '').toLowerCase(), nn = newName.toLowerCase();
+    const all = loadClients().filter(function(c){
+      const k = (c.name || '').toLowerCase();
+      return k !== on && k !== nn;
+    });
+    all.push({ name: newName, address: (newAddr || '').trim() });
+    try { localStorage.setItem(CLIENT_KEY, JSON.stringify(all)); } catch(e){}
+  }
+  function renderClientsList(){
+    const list = document.getElementById('clientsList');
+    const all = loadClients().slice().sort(function(a,b){
+      return ('' + (a.name || '')).toLowerCase().localeCompare(('' + (b.name || '')).toLowerCase());
+    });
+    list.innerHTML = '';
+    if(all.length === 0){
+      list.innerHTML = '<p class="hint">No clients saved yet. Generate an invoice and the client is remembered automatically.</p>';
+      return;
+    }
+    all.forEach(function(c){
+      const row = document.createElement('div');
+      row.className = 'cl-row';
+      const info = document.createElement('div');
+      info.className = 'cl-info';
+      info.innerHTML =
+        '<div class="cl-name">' + (c.name || '').replace(/</g,'&lt;') + '</div>' +
+        '<div class="cl-addr">' + (((c.address || '').replace(/</g,'&lt;').replace(/\n/g,', ')) || '—') + '</div>';
+      const actions = document.createElement('div');
+      actions.className = 'cl-actions';
+      const edit = document.createElement('button');
+      edit.type = 'button'; edit.className = 'cl-edit'; edit.textContent = 'Edit';
+      edit.addEventListener('click', function(){
+        const nn = prompt('Client name:', c.name);
+        if(nn === null) return;
+        const na = prompt('Address (use commas or new lines):', c.address || '');
+        if(na === null) return;
+        updateClient(c.name, nn, na);
+        renderClientsList();
+      });
+      const del = document.createElement('button');
+      del.type = 'button'; del.className = 'cl-del'; del.textContent = '🗑';
+      del.addEventListener('click', function(){
+        if(confirm('Delete client "' + c.name + '"?')){ deleteClient(c.name); renderClientsList(); }
+      });
+      actions.appendChild(edit); actions.appendChild(del);
+      row.appendChild(info); row.appendChild(actions);
+      list.appendChild(row);
+    });
+  }
+
+  // ---- voice typing (speech-to-text) ----
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let activeRec = null;
+  function startDictation(input, btn){
+    if(!SpeechRec) return;
+    if(activeRec){ try { activeRec.stop(); } catch(e){} activeRec = null; }
+    const rec = new SpeechRec();
+    rec.lang = 'en-IN';
+    rec.interimResults = true;
+    rec.continuous = false;
+    const base = input.value ? (input.value.replace(/\s+$/,'') + ' ') : '';
+    btn.classList.add('mic-live');
+    btn.textContent = '● listening…';
+    rec.onresult = function(e){
+      let txt = '';
+      for(var i=0;i<e.results.length;i++){ txt += e.results[i][0].transcript; }
+      input.value = base + txt;
+      input.dispatchEvent(new Event('input'));
+    };
+    function done(){ btn.classList.remove('mic-live'); btn.textContent = '🎤 Tap & speak'; activeRec = null; }
+    rec.onend = done;
+    rec.onerror = done;
+    activeRec = rec;
+    try { rec.start(); } catch(e){ done(); }
+  }
+  function attachMic(input, afterEl){
+    if(!SpeechRec || !input) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'mic-btn';
+    btn.textContent = '🎤 Tap & speak';
+    (afterEl || input).insertAdjacentElement('afterend', btn);
+    btn.addEventListener('click', function(){ startDictation(input, btn); });
+  }
   const fmt = n => '₹ ' + (isNaN(n) ? 0 : n).toLocaleString('en-IN');
 
   function makeItem(desc, amt, removable){
@@ -316,6 +599,7 @@
       (removable ? '<button type="button" class="removeBtn">✕ Remove this line</button>' : '');
     itemsWrap.appendChild(div);
     div.querySelectorAll('input').forEach(i => i.addEventListener('input', updateTotal));
+    attachMic(div.querySelector('.itemDesc'));
     const rm = div.querySelector('.removeBtn');
     if (rm) rm.addEventListener('click', function(){ div.remove(); updateTotal(); });
   }
@@ -337,6 +621,22 @@
   // default date = today
   const d = new Date();
   document.getElementById('invDate').value = d.toISOString().slice(0,10);
+
+  // voice typing + client suggestions
+  const nameEl = document.getElementById('billName');
+  const suggestBox = document.getElementById('clientSuggest');
+  attachMic(nameEl, suggestBox);
+  attachMic(document.getElementById('billAddr'));
+  nameEl.addEventListener('input', function(){
+    renderSuggest(this.value);
+    const c = findClient(this.value);
+    if(c){ document.getElementById('billAddr').value = c.address || ''; }
+  });
+  nameEl.addEventListener('focus', function(){ renderSuggest(this.value); });
+  document.addEventListener('click', function(e){
+    if(e.target === nameEl || (suggestBox && suggestBox.contains(e.target))) return;
+    if(suggestBox) suggestBox.style.display = 'none';
+  });
 
   function fmtDate(iso){
     if(!iso) return '';
@@ -415,6 +715,29 @@
 
     lastInvoice = { invNo: invNo, name: billName, total: total, words: words };
 
+    // ---- store this invoice (history starts today) ----
+    const noteSaved = document.getElementById('invNote').value.trim();
+    const itemsArr = [];
+    document.querySelectorAll('.item').forEach(function(it){
+      const d = it.querySelector('.itemDesc').value.trim();
+      const a = parseFloat(it.querySelector('.itemAmt').value) || 0;
+      if(!d && !a) return;
+      itemsArr.push({ desc: d, amt: a });
+    });
+    saveInvoice({
+      id: Date.now(),
+      savedAt: new Date().toISOString(),
+      invNo: invNo,
+      date: dateVal,
+      billName: billName,
+      billAddr: billAddr,
+      items: itemsArr,
+      total: total,
+      words: words,
+      note: noteSaved
+    });
+    saveClient(billName, billAddr);
+
     document.getElementById('formSection').style.display = 'none';
     document.getElementById('invoiceSection').classList.add('show');
     window.scrollTo(0,0);
@@ -434,15 +757,211 @@
     setTimeout(function(){ document.title = 'Invoice Generator — Samir Dasani'; }, 2000);
   });
 
-  document.getElementById('waBtn').addEventListener('click', function(){
-    const inv = lastInvoice || {};
-    const invNo = inv.invNo || document.getElementById('outInvNo').textContent || '';
+  function buildInvoiceMessage(inv, invNo){
     let msg = 'INVOICE #' + invNo + '\n';
     if(inv.name) msg += 'Bill To: ' + inv.name + '\n';
     msg += 'Total: Rs. ' + (inv.total != null ? inv.total.toLocaleString('en-IN') : '') + '\n';
     if(inv.words) msg += '(' + inv.words + ')\n';
     msg += '\nPayable to: Samir Dasani\nUPI: 9820339899\nICICI A/c 032401501054 (IFSC ICIC0006426)';
-    window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    return msg;
+  }
+
+  async function makeInvoicePdf(){
+    const el = document.getElementById('invoiceOut');
+    const canvas = await html2canvas(el, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+      onclone: function(doc){
+        doc.querySelectorAll('.inv-title').forEach(function(e){
+          e.style.webkitTextFillColor = '#1f3a93';
+          e.style.color = '#1f3a93';
+          e.style.background = 'none';
+        });
+      }
+    });
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const margin = 10;
+    const imgW = 210 - margin * 2;
+    const imgH = canvas.height * imgW / canvas.width;
+    const pageH = 297 - margin * 2;
+    if(imgH <= pageH){
+      pdf.addImage(imgData, 'PNG', margin, margin, imgW, imgH);
+    } else {
+      let heightLeft = imgH;
+      let pos = margin;
+      pdf.addImage(imgData, 'PNG', margin, pos, imgW, imgH);
+      heightLeft -= pageH;
+      while(heightLeft > 0){
+        pdf.addPage();
+        pos = margin - (imgH - heightLeft);
+        pdf.addImage(imgData, 'PNG', margin, pos, imgW, imgH);
+        heightLeft -= pageH;
+      }
+    }
+    return pdf;
+  }
+
+  document.getElementById('waBtn').addEventListener('click', async function(){
+    const btn = this;
+    const inv = lastInvoice || {};
+    const invNo = inv.invNo || document.getElementById('outInvNo').textContent || '';
+    const fileName = invNo + ' - Invoice.pdf';
+    const msg = buildInvoiceMessage(inv, invNo);
+    const oldLabel = btn.textContent;
+    btn.textContent = 'Preparing PDF...';
+    btn.disabled = true;
+    try {
+      const pdf = await makeInvoicePdf();
+      const blob = pdf.output('blob');
+      const file = new File([blob], fileName, { type: 'application/pdf' });
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        await navigator.share({ files: [file], title: 'Invoice #' + invNo, text: msg });
+      } else {
+        // Desktop / unsupported: download the PDF and open WhatsApp to attach it
+        pdf.save(fileName);
+        window.open('https://wa.me/?text=' + encodeURIComponent(msg + '\n\n(PDF "' + fileName + '" downloaded - attach it here.)'), '_blank');
+      }
+    } catch(err){
+      if(!(err && err.name === 'AbortError')){
+        alert('Could not build the PDF automatically. Please use "Save as PDF / Print" and attach that file in WhatsApp.');
+      }
+    } finally {
+      btn.textContent = oldLabel;
+      btn.disabled = false;
+    }
+  });
+  function showStoredInvoice(rec){
+    document.getElementById('outInvNo').textContent = rec.invNo;
+    document.getElementById('outDate').textContent = rec.date || '';
+    document.getElementById('outBillName').textContent = rec.billName || '';
+    const addrWrap = document.getElementById('outBillAddr');
+    addrWrap.innerHTML = '';
+    (rec.billAddr || '').split('\n').map(function(s){return s.trim();}).filter(Boolean).forEach(function(line){
+      const p = document.createElement('p'); p.textContent = line; addrWrap.appendChild(p);
+    });
+    const body = document.getElementById('outItemsBody');
+    body.innerHTML = '';
+    (rec.items || []).forEach(function(it){
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + (it.desc || '') + '</td><td>' + (it.amt || 0).toLocaleString('en-IN') + '</td>';
+      body.appendChild(tr);
+    });
+    document.getElementById('outTotal').textContent = (rec.total || 0).toLocaleString('en-IN');
+    document.getElementById('outWords').textContent = rec.words || numToWords(rec.total || 0);
+    const noteWrap = document.getElementById('outNoteWrap');
+    if(rec.note){
+      document.getElementById('outNote').textContent = rec.note;
+      noteWrap.style.display = 'block';
+    } else {
+      noteWrap.style.display = 'none';
+    }
+    document.getElementById('outTimestamp').textContent = rec.savedAt ? new Date(rec.savedAt).toLocaleString('en-IN') : '';
+    lastInvoice = { invNo: rec.invNo, name: rec.billName, total: rec.total, words: rec.words };
+    document.getElementById('historySection').style.display = 'none';
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('invoiceSection').classList.add('show');
+    window.scrollTo(0,0);
+  }
+
+  function renderHistoryList(){
+    const list = document.getElementById('histList');
+    const all = loadInvoices().slice().reverse();
+    list.innerHTML = '';
+    if(all.length === 0){
+      list.innerHTML = '<p class="hint">No invoices saved yet. Generate an invoice and it will appear here.</p>';
+      return;
+    }
+    all.forEach(function(rec){
+      const row = document.createElement('div');
+      row.className = 'hist-row';
+      const open = document.createElement('button');
+      open.type = 'button';
+      open.className = 'hist-open';
+      open.innerHTML =
+        '<div class="hist-main"><span class="hist-no">#' + rec.invNo + '</span> <span class="hist-name">' + (rec.billName || '—') + '</span></div>' +
+        '<div class="hist-sub"><span>' + (rec.date || '') + ' &middot; FY ' + fyOf(rec) + '</span><span class="hist-amt">Rs. ' + (rec.total || 0).toLocaleString('en-IN') + '</span></div>';
+      open.addEventListener('click', function(){ showStoredInvoice(rec); });
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'hist-del';
+      del.textContent = '🗑';
+      del.title = 'Delete this invoice';
+      del.addEventListener('click', function(){
+        if(confirm('Delete invoice #' + rec.invNo + '? This cannot be undone.')){
+          deleteInvoice(rec.id);
+          renderHistoryList();
+        }
+      });
+      row.appendChild(open);
+      row.appendChild(del);
+      list.appendChild(row);
+    });
+  }
+
+  document.getElementById('historyBtn').addEventListener('click', function(){
+    const pw = prompt('Enter password to view saved invoices:');
+    if(pw === null) return;
+    if(pw !== HIST_PASSWORD){ alert('Incorrect password.'); return; }
+    renderHistoryList();
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('invoiceSection').classList.remove('show');
+    document.getElementById('historySection').style.display = 'block';
+    window.scrollTo(0,0);
+  });
+
+  document.getElementById('histBackBtn').addEventListener('click', function(){
+    document.getElementById('historySection').style.display = 'none';
+    document.getElementById('formSection').style.display = 'block';
+    window.scrollTo(0,0);
+  });
+
+  function downloadExcel(){
+    const all = loadInvoices();
+    if(all.length === 0){ alert('No saved invoices to export yet.'); return; }
+    if(typeof XLSX === 'undefined'){ alert('Excel tool is still loading or offline. Please check your internet and try again.'); return; }
+    function rowOf(r){
+      return {
+        'Invoice No': r.invNo,
+        'Date': r.date || '',
+        'Financial Year': 'FY ' + fyOf(r),
+        'Client': r.billName || '',
+        'Items': (r.items || []).map(function(it){ return it.desc + ' = ' + it.amt; }).join('; '),
+        'Total (Rs.)': r.total || 0,
+        'Amount in words': r.words || '',
+        'Note': r.note || '',
+        'Saved On': r.savedAt ? new Date(r.savedAt).toLocaleString('en-IN') : ''
+      };
+    }
+    const wb = XLSX.utils.book_new();
+    const summary = all.slice().sort(function(a,b){ return ('' + (a.savedAt||'')).localeCompare('' + (b.savedAt||'')); }).map(rowOf);
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summary), 'All Invoices');
+    const groups = {};
+    all.forEach(function(r){ const f = fyOf(r); (groups[f] = groups[f] || []).push(r); });
+    Object.keys(groups).sort().forEach(function(f){
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(groups[f].map(rowOf)), ('FY ' + f).substring(0,31));
+    });
+    XLSX.writeFile(wb, 'Invoices Summary.xlsx');
+  }
+  document.getElementById('downloadXlsxBtn').addEventListener('click', downloadExcel);
+
+  document.getElementById('clientsBtn').addEventListener('click', function(){
+    const pw = prompt('Enter password to manage saved clients:');
+    if(pw === null) return;
+    if(pw !== HIST_PASSWORD){ alert('Incorrect password.'); return; }
+    renderClientsList();
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('invoiceSection').classList.remove('show');
+    document.getElementById('historySection').style.display = 'none';
+    document.getElementById('clientsSection').style.display = 'block';
+    window.scrollTo(0,0);
+  });
+  document.getElementById('clientsBackBtn').addEventListener('click', function(){
+    document.getElementById('clientsSection').style.display = 'none';
+    document.getElementById('formSection').style.display = 'block';
+    window.scrollTo(0,0);
   });
 })();
 </script>
